@@ -8,6 +8,7 @@ using namespace cv;
 float Scale = 1;
 int WindowStartX = 300, WindowStartY = 100, WindowMargin = 10;
 
+
 int main(int argc, char** argv)
 {
 
