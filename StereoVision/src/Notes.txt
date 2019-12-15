@@ -1,0 +1,59 @@
+/*
+std::cout << (int)imgL.at<uchar>(0, 0) << std::endl;
+std::cout << (int)imgL.at<uchar>(10, 10) << std::endl;
+std::cout << (int)imgL.at<uchar>(0, 0) - (int)imgL.at<uchar>(10, 10) << std::endl;
+
+for (int r = 0; r < diff.rows; r++)
+{
+	for (int c = 0; c < diff.cols; c++)
+	{
+		diff.at<uchar>(r, c) = (int)imgL.at<uchar>(r, c) - (int)imgR.at<uchar>(r, c);
+	}
+}
+
+
+for (int r = 0; r < imgL.rows; r++)
+	{
+		for (int c = 0; c < imgL.cols; c++)
+		{
+			if (imgL.at<uchar>(r, c) > MAX_DISP) MAX_DISP = imgL.at<uchar>(r, c);
+		}
+	}
+
+
+
+
+absdiff(imgR, imgL, diffClr);
+bitwise_not(diffClr, diffGrs);
+
+split(diffClr, BGR);
+	diffGrs = BGR[0] * 0.0722f + BGR[1] * 0.7152f + BGR[2] * 0.2126f;
+
+std::cout <<"Max / Min disparity: "<< MAX_DISP<<" / " << MIN_DISP <<std::endl;
+
+
+
+	namedWindow("Left", WINDOW_FREERATIO);
+	namedWindow("Right", WINDOW_FREERATIO);
+	namedWindow("DiffClr", WINDOW_FREERATIO);
+	namedWindow("DiffGrs", WINDOW_FREERATIO);
+
+
+	imshow("Left", imgL);
+	imshow("Right", imgR);
+	imshow("DiffClr", diffClr);
+	imshow("DiffGrs", diffGrs);
+
+
+	resizeWindow("Left", imgL.cols * Scale, imgL.rows * Scale);
+	resizeWindow("Right", imgR.cols * Scale, imgR.rows * Scale);
+	resizeWindow("DiffClr", imgL.cols * Scale, imgL.rows * Scale);
+	resizeWindow("DiffGrs", imgR.cols * Scale, imgR.rows * Scale);
+
+
+	moveWindow("Left", WindowStartX, WindowStartY);
+	moveWindow("Right", WindowStartX + imgL.cols * Scale + WindowMargin, WindowStartY);
+	moveWindow("DiffClr", WindowStartX, WindowStartY + imgL.rows * Scale + WindowMargin + 30);
+	moveWindow("DiffGrs", WindowStartX + imgL.cols * Scale + WindowMargin, WindowStartY + imgL.rows * Scale + WindowMargin + 30);
+
+*/
