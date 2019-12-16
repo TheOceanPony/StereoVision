@@ -2,8 +2,12 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\functions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\Notes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\functions.h" />
   </ItemGroup>
 </Project>

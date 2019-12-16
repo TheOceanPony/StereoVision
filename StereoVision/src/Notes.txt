@@ -1,4 +1,4 @@
-/*
+//////////////// Unary penalty /////////////////////
 
 for (int row = 0; row < width; row++)
 	{
@@ -16,21 +16,36 @@ for (int row = 0; row < width; row++)
 
 
 
+//////////////// Binary penalty /////////////////////
+
+Mat binaryPen = Mat::zeros(MAX_DISP, MAX_DISP, CV_8UC1);
+for (int di = 0; di < MAX_DISP; di++)
+{
+	for (int dj = 0; dj < MAX_DISP; dj++)
+	{
+		binaryPen.at<uchar>(di, dj) = abs(di - dj); // TODO shoudI do it the other way? Like, it's simetrical and not random
+	}
+}
 
 
-/*
+
+
+/////////////////////////////////////
+
 std::cout << "> Test: " << (int)imL.at<uchar>(0, 0)<< std::endl;
 std::cout << "> Test: " << (int)imL.at<uchar>(height - 1, 0) << std::endl;
 std::cout << "> Test: " << (int)imL.at<uchar>(0, width - 1) << std::endl;
 std::cout << "> Test: " << (int)imL.at<uchar>(height - 1, width - 1) << std::endl;
-*/
-
 
 
 std::cout << (int)imgL.at<uchar>(0, 0) << std::endl;
 std::cout << (int)imgL.at<uchar>(10, 10) << std::endl;
 std::cout << (int)imgL.at<uchar>(0, 0) - (int)imgL.at<uchar>(10, 10) << std::endl;
 
+
+
+
+/////////////////////////////////////
 for (int r = 0; r < diff.rows; r++)
 {
 	for (int c = 0; c < diff.cols; c++)
@@ -40,6 +55,9 @@ for (int r = 0; r < diff.rows; r++)
 }
 
 
+
+
+/////////////////////////////////////
 for (int r = 0; r < imgL.rows; r++)
 	{
 		for (int c = 0; c < imgL.cols; c++)
@@ -51,15 +69,23 @@ for (int r = 0; r < imgL.rows; r++)
 
 
 
+/////////////////////////////////////
 absdiff(imgR, imgL, diffClr);
 bitwise_not(diffClr, diffGrs);
 
 split(diffClr, BGR);
 	diffGrs = BGR[0] * 0.0722f + BGR[1] * 0.7152f + BGR[2] * 0.2126f;
 
+
+
+
+/////////////////////////////////////
 std::cout <<"Max / Min disparity: "<< MAX_DISP<<" / " << MIN_DISP <<std::endl;
 
 
+
+
+//////////////// DISPLAYING /////////////////////
 
 	namedWindow("Left", WINDOW_FREERATIO);
 	namedWindow("Right", WINDOW_FREERATIO);

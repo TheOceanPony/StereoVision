@@ -1,5 +1,4 @@
 #include "opencv2/opencv.hpp"
-#include "penalty.h"
 #include <stdint.h>
 #include <iostream>
 
@@ -7,6 +6,7 @@ using namespace cv;
 
 float Scale = 1; // Windows settings
 int WindowStartX = 300, WindowStartY = 100, WindowMargin = 10;
+
 
 
 int main(int argc, char** argv)
@@ -18,6 +18,8 @@ int main(int argc, char** argv)
 	Mat diffClr, diffGrs;
 	std::vector<Mat> BGR_L, BGR_R;
 
+
+
 	// Geting image parameters
 	int width = imL.cols, height = imL.rows;
 	double MAX_DISP, MIN_DISP;
@@ -28,7 +30,6 @@ int main(int argc, char** argv)
 	Mat test = Mat::zeros(100, 10, CV_8UC1);
 	std::cout << "Width: " << test.cols << " Height: " << test.rows << std::endl; //For reference on args positions
 
-
 	// Converting color to greyscale
 	split(imL, BGR_L);
 	split(imR, BGR_R);
@@ -36,26 +37,10 @@ int main(int argc, char** argv)
 	imR = BGR_R[0] * 0.0722f + BGR_R[1] * 0.7152f + BGR_R[2] * 0.2126f;
 
 	
-	//Unary penalty                  unaryPen row = 0, i = 20, di = 10 - (int)unaryPen[0].at<uchar>(20, 10)
-	std::vector<cv::Mat> unaryPen;
-	for (int row = 0; row < height; row++)
-	{
-		Mat temp = Mat::zeros(width, MAX_DISP, CV_8UC1);
-		for (int i = 0; i < width; i++)
-		{
-			for (int di = 0; di < MAX_DISP; di++) // TODO Possible mistakes here
-			{
-				if (i >= di) temp.at<uchar>(i, di) = abs((int)imL.at<uchar>(row, i) - (int)imR.at<uchar>(row, i - di));
-				else temp.at<uchar>(i, di) = 0;
-			}
-		}
-		unaryPen.push_back(temp);
-	}
-	
 
+	
 	//Binary penalty
 	Mat binaryPen = Mat::zeros(MAX_DISP, MAX_DISP, CV_8UC1);
-	
 	for (int di = 0; di < MAX_DISP; di++)
 	{
 		for (int dj = 0; dj < MAX_DISP; dj++)
@@ -64,6 +49,7 @@ int main(int argc, char** argv)
 		}
 	}
 
+	
 	
 
 
