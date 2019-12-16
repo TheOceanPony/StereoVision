@@ -73,7 +73,7 @@ int f(int row, int i, int d)
 		if (i == 0) return unaryPenalty(row, i, d);
 
 		//min_dt(f)
-		int minf = 99999999; // TO DO possible mistakes
+		int minf = std::numeric_limits<int>::max(); // TO DO possible mistakes
 		for (int dt = 0; dt < MAX_DISP; dt++)
 		{
 			int tempf = f(row, i - 1, dt) + binaryPenalty(d, dt);
@@ -95,15 +95,11 @@ void initFi(int row, int m, int maxdisp)
 			//progress(i, m);
 		}
 	}
-	
-	namedWindow("Fi", WINDOW_FREERATIO);
-	imshow("Left", Fi);
-	
 }
 
 int minf(int row)
 {
-	int min = 99999999;
+	int min = std::numeric_limits<int>::max();
 	for (int dt = 0; dt < MAX_DISP; dt++)
 	{
 		int tempf = (int)Fi.at<char>(WIDTH-1, dt);
@@ -136,6 +132,7 @@ void progress(int p, int max)
 			else std::cout << " ";
 		}
 		std::cout << "] - " << p << " / " << max << endl;
+		std::cout << std::flush;
 	}
 	
 }

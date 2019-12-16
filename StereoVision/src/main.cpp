@@ -22,8 +22,9 @@ int main(int argc, char** argv)
 
 	// Geting image parameters
 	int width = imL.cols, height = imL.rows;
-	double MAX_DISP, MIN_DISP;
-	minMaxLoc(disp, &MIN_DISP, &MAX_DISP);
+	double max, MIN_DISP;
+	minMaxLoc(disp, &MIN_DISP, &max);
+	int MAX_DISP = max/8;
 	std::cout << "Max / Min disparity: " << MAX_DISP << " / " << MIN_DISP << std::endl;
 	std::cout << "Width: " << width<< " Height: " << height << std::endl;
 
@@ -39,7 +40,7 @@ int main(int argc, char** argv)
 	
 	//Mat A = Mat(20, 20, CV_8S, -1);
 	//std::cout << "Hello" << std::endl;
-	//std::cout << ">D: " << (int)A.at<char>(0, 0) << std::endl;
+	//std::cout << std::numeric_limits<int>::max() << std::endl;
 	
 
 	initUnaryPenalty(imL, imR, MAX_DISP);
@@ -47,10 +48,10 @@ int main(int argc, char** argv)
 
 	
 
-	for (int row = 0; row < 1; row++)
+	for (int row = 0; row < height; row++)
 	{
 		initFi(row, width, MAX_DISP);
-		//progress(row, height);
+		progress(row, height);
 		std::cout << minf(row) << std::endl;
 	}
 
