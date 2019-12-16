@@ -37,7 +37,9 @@ int main(int argc, char** argv)
 	imR = BGR_R[0] * 0.0722f + BGR_R[1] * 0.7152f + BGR_R[2] * 0.2126f;
 
 	
-	std::cout << (int)(-1) << std::endl;
+	//Mat A = Mat(20, 20, CV_8S, -1);
+	//std::cout << "Hello" << std::endl;
+	//std::cout << ">D: " << (int)A.at<char>(0, 0) << std::endl;
 	
 
 	initUnaryPenalty(imL, imR, MAX_DISP);
@@ -45,10 +47,10 @@ int main(int argc, char** argv)
 
 	
 
-	for (int row = 0; row < height; row++)
+	for (int row = 0; row < 1; row++)
 	{
 		initFi(row, width, MAX_DISP);
-		progress(row, height);
+		//progress(row, height);
 		std::cout << minf(row) << std::endl;
 	}
 

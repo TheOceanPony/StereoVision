@@ -62,9 +62,11 @@ Mat Fi;
 
 int f(int row, int i, int d)
 {
-	if ( (int)Fi.at<uchar>(i, d) != -1)
+	int b = (int)Fi.at<char>(i, d);
+	
+	if ( b != -1)
 	{
-		return (int)Fi.at<uchar>(i, d);
+		return (int)Fi.at<char>(i, d);
 	}
 	else
 	{
@@ -77,7 +79,7 @@ int f(int row, int i, int d)
 			int tempf = f(row, i - 1, dt) + binaryPenalty(d, dt);
 			if (tempf < minf) minf = tempf;
 		}
-
+		//cout << ">minf: " << minf << std::endl;
 		return minf + unaryPenalty(row, i, d);
 	}
 }
@@ -86,15 +88,20 @@ void initFi(int row, int m, int maxdisp)
 {
 	Fi = Mat(m, maxdisp, CV_8S, -1);
 
+	//std::cout << "Hello" << std::endl;
+	//cout << ">D: " << (int)Fi.at<char>(0, 0) << std::endl;
+
 	for (int i = 0; i < m; i++)
 	{
 		for (int d = 0; d < maxdisp; d++)
 		{
-			Fi.at<uchar>(i, d) = f(row, i, d);	
+			Fi.at<char>(i, d) = f(row, i, d);
+			progress(i, m);
+			//cout << ">f: " << a << std::endl;
 		}
 		//std::cout << "> row: " <<row<<" i:"<< i << std::endl;
 	}
-
+	
 	
 }
 
@@ -105,7 +112,7 @@ int minf(int row)
 	int min = 99999999;
 	for (int dt = 0; dt < MAX_DISP; dt++)
 	{
-		int tempf = (int)Fi.at<uchar>(WIDTH-1, dt);
+		int tempf = (int)Fi.at<char>(WIDTH-1, dt);
 		if (tempf < min) min = tempf;
 	}
 	return min;
