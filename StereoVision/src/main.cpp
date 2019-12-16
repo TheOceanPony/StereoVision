@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 	imR = BGR_R[0] * 0.0722f + BGR_R[1] * 0.7152f + BGR_R[2] * 0.2126f;
 
 	
-	std::cout << "Start" << std::endl;
+	std::cout << (int)(-1) << std::endl;
 	
 
 	initUnaryPenalty(imL, imR, MAX_DISP);
@@ -45,22 +45,23 @@ int main(int argc, char** argv)
 
 	
 
-	for (int row = 0; row < 3; row++)
+	for (int row = 0; row < height; row++)
 	{
 		initFi(row, width, MAX_DISP);
 		progress(row, height);
+		std::cout << minf(row) << std::endl;
 	}
 
-	std::cout << minf(2) << std::endl;
+	
 
 	namedWindow("Left", WINDOW_FREERATIO);
 	namedWindow("Right", WINDOW_FREERATIO);
-	//namedWindow("unaryPen[0]", WINDOW_FREERATIO);
+	namedWindow("Fi", WINDOW_FREERATIO);
 	//namedWindow("unaryPen[1]", WINDOW_FREERATIO);
 
 	imshow("Left", imL);
 	imshow("Right", imR);
-	//imshow("unaryPen[0]", unaryPen[0]);
+	//imshow("unaryPen[0]", Fi);
 	//imshow("unaryPen[1]", unaryPen[0]);
 
 	resizeWindow("Left", width * Scale, height * Scale);

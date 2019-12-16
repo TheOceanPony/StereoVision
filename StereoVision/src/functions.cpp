@@ -94,10 +94,14 @@ void initFi(int row, int m, int maxdisp)
 		}
 		//std::cout << "> row: " <<row<<" i:"<< i << std::endl;
 	}
+
+	
 }
 
 int minf(int row)
 {
+	//std::cout << Fi << std::endl;
+
 	int min = 99999999;
 	for (int dt = 0; dt < MAX_DISP; dt++)
 	{
