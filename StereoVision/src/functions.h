@@ -8,5 +8,5 @@ int unaryPenalty(int row, int i, int disp);
 void initBinaryPenalty(int MAX_DISP);
 int initUnaryPenalty(int di, int dj);
 
-int f();
+int f(int row, int i, int d);
 

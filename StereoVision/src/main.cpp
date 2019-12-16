@@ -1,12 +1,11 @@
 #include "opencv2/opencv.hpp"
+#include "functions.h"
 #include <stdint.h>
-#include <iostream>
 
 using namespace cv;
 
 float Scale = 1; // Windows settings
-int WindowStartX = 300, WindowStartY = 100, WindowMargin = 10;
-
+int WindowStartX = 800, WindowStartY = 100, WindowMargin = 10;
 
 
 int main(int argc, char** argv)
@@ -37,21 +36,10 @@ int main(int argc, char** argv)
 	imR = BGR_R[0] * 0.0722f + BGR_R[1] * 0.7152f + BGR_R[2] * 0.2126f;
 
 	
-
 	
-	//Binary penalty
-	Mat binaryPen = Mat::zeros(MAX_DISP, MAX_DISP, CV_8UC1);
-	for (int di = 0; di < MAX_DISP; di++)
-	{
-		for (int dj = 0; dj < MAX_DISP; dj++)
-		{
-			binaryPen.at<uchar>(di, dj) = abs(di - dj); // TODO shoudI do it the other way? Like, it's simetrical and not random
-		}
-	}
-
-	
-	
-
+	initUnaryPenalty(imL, imR, MAX_DISP);
+	initBinaryPenalty(MAX_DISP);
+	std::cout << f(0, 200, 56) << std::endl;
 
 
 
@@ -59,23 +47,23 @@ int main(int argc, char** argv)
 
 	namedWindow("Left", WINDOW_FREERATIO);
 	namedWindow("Right", WINDOW_FREERATIO);
-	namedWindow("unaryPen[0]", WINDOW_FREERATIO);
-	namedWindow("unaryPen[1]", WINDOW_FREERATIO);
+	//namedWindow("unaryPen[0]", WINDOW_FREERATIO);
+	//namedWindow("unaryPen[1]", WINDOW_FREERATIO);
 
 	imshow("Left", imL);
 	imshow("Right", imR);
-	imshow("unaryPen[0]", unaryPen[0]);
-	imshow("unaryPen[1]", unaryPen[0]);
+	//imshow("unaryPen[0]", unaryPen[0]);
+	//imshow("unaryPen[1]", unaryPen[0]);
 
 	resizeWindow("Left", width * Scale, height * Scale);
 	resizeWindow("Right", width * Scale, height * Scale);
-	resizeWindow("unaryPen[0]", unaryPen[0].cols * Scale, unaryPen[0].rows * Scale);
-	resizeWindow("unaryPen[1]", unaryPen[1].cols * Scale, unaryPen[1].rows * Scale);
+	//resizeWindow("unaryPen[0]", unaryPen[0].cols * Scale, unaryPen[0].rows * Scale);
+	//resizeWindow("unaryPen[1]", unaryPen[1].cols * Scale, unaryPen[1].rows * Scale);
 
 	moveWindow("Left", WindowStartX, WindowStartY);
 	moveWindow("Right", WindowStartX + width * Scale + WindowMargin, WindowStartY);
-	moveWindow("unaryPen[0]", WindowStartX, WindowStartY + height * Scale + WindowMargin + 30);
-	moveWindow("unaryPen[1]", WindowStartX + width * Scale + WindowMargin, WindowStartY + height * Scale + WindowMargin + 30);
+	//moveWindow("unaryPen[0]", WindowStartX, WindowStartY + height * Scale + WindowMargin + 30);
+	//moveWindow("unaryPen[1]", WindowStartX + width * Scale + WindowMargin, WindowStartY + height * Scale + WindowMargin + 30);
 
 	waitKey();
 }
