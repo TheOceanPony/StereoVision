@@ -1,6 +1,7 @@
 #include "opencv2/opencv.hpp"
 #include "functions.h"
 #include <stdint.h>
+#include <conio.h>
 
 using namespace cv;
 
@@ -36,13 +37,19 @@ int main(int argc, char** argv)
 	imR = BGR_R[0] * 0.0722f + BGR_R[1] * 0.7152f + BGR_R[2] * 0.2126f;
 
 	
+	std::cout << "Start" << std::endl;
 	
+
 	initUnaryPenalty(imL, imR, MAX_DISP);
 	initBinaryPenalty(MAX_DISP);
-	std::cout << f(0, 200, 56) << std::endl;
 
+	
 
-
+	for (int row = 0; row < height; row++)
+	{
+		initFi(row, width, MAX_DISP);
+		progress(row, height);
+	}
 
 
 	namedWindow("Left", WINDOW_FREERATIO);
