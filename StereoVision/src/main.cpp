@@ -5,7 +5,7 @@
 
 using namespace cv;
 
-float Scale = 1;
+float Scale = 1; // Windows settings
 int WindowStartX = 300, WindowStartY = 100, WindowMargin = 10;
 
 
@@ -23,6 +23,11 @@ int main(int argc, char** argv)
 	double MAX_DISP, MIN_DISP;
 	minMaxLoc(disp, &MIN_DISP, &MAX_DISP);
 	std::cout << "Max / Min disparity: " << MAX_DISP << " / " << MIN_DISP << std::endl;
+	std::cout << "Width: " << width<< " Height: " << height << std::endl;
+
+	Mat test = Mat::zeros(100, 10, CV_8UC1);
+	std::cout << "Width: " << test.cols << " Height: " << test.rows << std::endl; //For reference on args positions
+
 
 	// Converting color to greyscale
 	split(imL, BGR_L);
@@ -30,32 +35,62 @@ int main(int argc, char** argv)
 	imL = BGR_L[0] * 0.0722f + BGR_L[1] * 0.7152f + BGR_L[2] * 0.2126f;
 	imR = BGR_R[0] * 0.0722f + BGR_R[1] * 0.7152f + BGR_R[2] * 0.2126f;
 
- 
-	double** BinaryPenalty = getBinaryPenalty(MAX_DISP);
 	
-	
-	for (int r = 0; r < 1; r++)
+	//Unary penalty                  unaryPen row = 0, i = 20, di = 10 - (int)unaryPen[0].at<uchar>(20, 10)
+	std::vector<cv::Mat> unaryPen;
+	for (int row = 0; row < height; row++)
 	{
-		for (int c = 0; c < imL.cols; c++)
+		Mat temp = Mat::zeros(width, MAX_DISP, CV_8UC1);
+		for (int i = 0; i < width; i++)
 		{
-			//std::cout << unaryPenalty(c, r, 2, imL, imR)<<std::endl;
+			for (int di = 0; di < MAX_DISP; di++) // TODO Possible mistakes here
+			{
+				if (i >= di) temp.at<uchar>(i, di) = abs((int)imL.at<uchar>(row, i) - (int)imR.at<uchar>(row, i - di));
+				else temp.at<uchar>(i, di) = 0;
+			}
+		}
+		unaryPen.push_back(temp);
+	}
+	
+
+	//Binary penalty
+	Mat binaryPen = Mat::zeros(MAX_DISP, MAX_DISP, CV_8UC1);
+	
+	for (int di = 0; di < MAX_DISP; di++)
+	{
+		for (int dj = 0; dj < MAX_DISP; dj++)
+		{
+			binaryPen.at<uchar>(di, dj) = abs(di - dj); // TODO shoudI do it the other way? Like, it's simetrical and not random
 		}
 	}
+
+	
+
+
 
 
 
 
 	namedWindow("Left", WINDOW_FREERATIO);
 	namedWindow("Right", WINDOW_FREERATIO);
+	namedWindow("unaryPen[0]", WINDOW_FREERATIO);
+	namedWindow("unaryPen[1]", WINDOW_FREERATIO);
 
 	imshow("Left", imL);
 	imshow("Right", imR);
+	imshow("unaryPen[0]", unaryPen[0]);
+	imshow("unaryPen[1]", unaryPen[0]);
 
 	resizeWindow("Left", width * Scale, height * Scale);
 	resizeWindow("Right", width * Scale, height * Scale);
+	resizeWindow("unaryPen[0]", unaryPen[0].cols * Scale, unaryPen[0].rows * Scale);
+	resizeWindow("unaryPen[1]", unaryPen[1].cols * Scale, unaryPen[1].rows * Scale);
 
 	moveWindow("Left", WindowStartX, WindowStartY);
 	moveWindow("Right", WindowStartX + width * Scale + WindowMargin, WindowStartY);
+	moveWindow("unaryPen[0]", WindowStartX, WindowStartY + height * Scale + WindowMargin + 30);
+	moveWindow("unaryPen[1]", WindowStartX + width * Scale + WindowMargin, WindowStartY + height * Scale + WindowMargin + 30);
 
 	waitKey();
 }
+

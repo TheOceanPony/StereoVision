@@ -148,10 +148,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\penalties.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\penalty.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\Notes.txt" />

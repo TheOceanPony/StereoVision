@@ -1,4 +1,32 @@
 /*
+
+for (int row = 0; row < width; row++)
+	{
+		Mat temp = Mat::zeros( width, MAX_DISP, CV_8UC1);
+		for (int i = 0; i < width; i++)
+		{
+			for (int di = 0; di < MAX_DISP; di++) // TODO Possible mistakes here
+			{
+				temp.at<uchar>(i, di) = abs( (int)imL.at<uchar>(row, i) - (int)imR.at<uchar>(row, i - di) );
+			}
+		}
+		unaryPen.push_back(temp);
+	}
+
+
+
+
+
+
+/*
+std::cout << "> Test: " << (int)imL.at<uchar>(0, 0)<< std::endl;
+std::cout << "> Test: " << (int)imL.at<uchar>(height - 1, 0) << std::endl;
+std::cout << "> Test: " << (int)imL.at<uchar>(0, width - 1) << std::endl;
+std::cout << "> Test: " << (int)imL.at<uchar>(height - 1, width - 1) << std::endl;
+*/
+
+
+
 std::cout << (int)imgL.at<uchar>(0, 0) << std::endl;
 std::cout << (int)imgL.at<uchar>(10, 10) << std::endl;
 std::cout << (int)imgL.at<uchar>(0, 0) - (int)imgL.at<uchar>(10, 10) << std::endl;
