@@ -57,7 +57,7 @@ int binaryPenalty(int di, int dj)
 }
 
 
-//////////////// f /////////////////////
+//////////////// Fi /////////////////////
 Mat Fi;
 
 int f(int row, int i, int d)
@@ -96,44 +96,41 @@ void initFi(int row, int m, int maxdisp)
 	}
 }
 
-/*
-void a()
+int minf(int row)
 {
-	float progress = 0.0;
-	while (progress < 1.0) {
-		int barWidth = 70;
-
-		std::cout << "[";
-		int pos = barWidth * progress;
-		for (int i = 0; i < barWidth; ++i) {
-			if (i < pos) std::cout << "=";
-			else if (i == pos) std::cout << ">";
-			else std::cout << " ";
-		}
-		std::cout << "] " << int(progress * 100.0) << " %\r";
-		std::cout.flush();
-
-		progress += 0.16; // for demonstration only
+	int min = 99999999;
+	for (int dt = 0; dt < MAX_DISP; dt++)
+	{
+		int tempf = (int)Fi.at<uchar>(WIDTH-1, dt);
+		if (tempf < min) min = tempf;
 	}
-	std::cout << std::endl;
+	return min;
 }
-*/
 
+
+//////////////// Progress bar /////////////////////
 void progress(int p, int max)
 {
 	system("cls");
 
-	int barWidth = 100;
-	float progress = p * 100 / max;
-
-	std::cout << "[";
-	//int pos = barWidth * progress;
-	for (int i = 0; i < barWidth; i++)
+	if (p == max)
 	{
-		if (i < (int)progress) std::cout << "*";
-		else if (i == (int)progress) std::cout << "|";
-		else std::cout << " ";
+		std::cout << "Done" << endl;
 	}
-	std::cout << "] - "<< p<<" / "<< max <<endl;
+	else
+	{
+		int barWidth = 100;
+		float progress = p * 100 / max;
+
+		std::cout << "[";
+		//int pos = barWidth * progress;
+		for (int i = 0; i < barWidth; i++)
+		{
+			if (i < (int)progress) std::cout << "*";
+			else if (i == (int)progress) std::cout << "|";
+			else std::cout << " ";
+		}
+		std::cout << "] - " << p << " / " << max << endl;
+	}
 	
 }

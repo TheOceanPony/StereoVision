@@ -45,12 +45,13 @@ int main(int argc, char** argv)
 
 	
 
-	for (int row = 0; row < height; row++)
+	for (int row = 0; row < 3; row++)
 	{
 		initFi(row, width, MAX_DISP);
 		progress(row, height);
 	}
 
+	std::cout << minf(2) << std::endl;
 
 	namedWindow("Left", WINDOW_FREERATIO);
 	namedWindow("Right", WINDOW_FREERATIO);

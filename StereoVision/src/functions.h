@@ -10,5 +10,6 @@ int binaryPenalty(int di, int dj);
 
 int f(int row, int i, int d);
 void initFi(int row, int m, int maxdisp);
+int minf(int row);
 
 void progress(int i, int max);
