@@ -21,12 +21,12 @@ void initUnaryPenalty(Mat imL, Mat imR, int maxdisp)
 			for (int di = 0; di < MAX_DISP; di++) // TODO Possible mistakes here
 			{
 				if (i >= di) temp.at<uchar>(i, di) = abs((int)imL.at<uchar>(row, i) - (int)imR.at<uchar>(row, i - di));
-				else temp.at<uchar>(i, di) = 0;
+				else temp.at<uchar>(i, di) = 255;
 			}
 		}
 		H.push_back(temp);
 	}
-	std::cout << ">Binary penalty matrix initialised!" << std::endl;
+	std::cout << ">Unary penalty matrix initialised!" << std::endl;
 }
 
 int unaryPenalty(int row, int i, int disp)
@@ -63,7 +63,7 @@ Mat Fi;
 int f(int row, int i, int d)
 {
 	int b = (int)Fi.at<char>(i, d);
-	
+	//cout << b << endl;
 	if ( b != -1)
 	{
 		return (int)Fi.at<char>(i, d);
@@ -79,7 +79,6 @@ int f(int row, int i, int d)
 			int tempf = f(row, i - 1, dt) + binaryPenalty(d, dt);
 			if (tempf < minf) minf = tempf;
 		}
-		//cout << ">minf: " << minf << std::endl;
 		return minf + unaryPenalty(row, i, d);
 	}
 }
@@ -88,27 +87,22 @@ void initFi(int row, int m, int maxdisp)
 {
 	Fi = Mat(m, maxdisp, CV_8S, -1);
 
-	//std::cout << "Hello" << std::endl;
-	//cout << ">D: " << (int)Fi.at<char>(0, 0) << std::endl;
-
 	for (int i = 0; i < m; i++)
 	{
 		for (int d = 0; d < maxdisp; d++)
 		{
 			Fi.at<char>(i, d) = f(row, i, d);
-			progress(i, m);
-			//cout << ">f: " << a << std::endl;
+			//progress(i, m);
 		}
-		//std::cout << "> row: " <<row<<" i:"<< i << std::endl;
 	}
 	
+	namedWindow("Fi", WINDOW_FREERATIO);
+	imshow("Left", Fi);
 	
 }
 
 int minf(int row)
 {
-	//std::cout << Fi << std::endl;
-
 	int min = 99999999;
 	for (int dt = 0; dt < MAX_DISP; dt++)
 	{
