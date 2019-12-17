@@ -15,13 +15,13 @@ void initUnaryPenalty(Mat imL, Mat imR, int maxdisp)
 
 	for (int row = 0; row < height; row++)
 	{
-		Mat temp = Mat::zeros(width, MAX_DISP, CV_8UC1);
+		Mat temp = Mat::zeros(width, MAX_DISP, CV_32F);
 		for (int i = 0; i < width; i++)
 		{
-			for (int di = 0; di < MAX_DISP; di++) // TODO Possible mistakes here
+			for (int di = 0; di < MAX_DISP; di++) 
 			{
-				if (i >= di) temp.at<uchar>(i, di) = abs((int)imL.at<uchar>(row, i) - (int)imR.at<uchar>(row, i - di));
-				else temp.at<uchar>(i, di) = 255;
+				if (i >= di) temp.at<float>(i, di) = abs((int)imL.at<uchar>(row, i) - (int)imR.at<uchar>(row, i - di));
+				else temp.at<float>(i, di) = 0; // TODO Possible mistakes here
 			}
 		}
 		H.push_back(temp);
@@ -31,7 +31,7 @@ void initUnaryPenalty(Mat imL, Mat imR, int maxdisp)
 
 int unaryPenalty(int row, int i, int disp)
 {
-	return (int)H[row].at<uchar>(i, disp);
+	return H[row].at<float>(i, disp);
 }
 
 
@@ -40,81 +40,88 @@ Mat g;
 
 void initBinaryPenalty(int maxdisp)
 {
-	g = Mat::zeros(maxdisp, maxdisp, CV_8UC1);
+	g = Mat::zeros(maxdisp, maxdisp, CV_32F);
 	for (int di = 0; di < maxdisp; di++)
 	{
 		for (int dj = 0; dj < maxdisp; dj++)
 		{
-			g.at<uchar>(di, dj) = abs(di - dj); // TODO shoudI do it the other way? Like, it's simetrical and not random
+			g.at<float>(di, dj) = abs(di - dj); 
 		}
 	}
-	std::cout <<">Binary penalty matrix initialised!"<< std::endl;
+	std::cout << ">Binary penalty matrix initialised!" << std::endl;
 }
 
 int binaryPenalty(int di, int dj)
 {
-	return (int)g.at<uchar>(di, dj);
+	return g.at<float>(di, dj);
 }
-
 
 //////////////// Fi /////////////////////
 Mat Fi;
+int HEIGHT;
 
-int f(int row, int i, int d)
+float f(int row, int i, int d)
 {
-	int b = (int)Fi.at<char>(i, d);
-	//cout << b << endl;
-	if ( b != -1)
-	{
-		return (int)Fi.at<char>(i, d);
-	}
-	else
-	{
-		if (i == 0) return unaryPenalty(row, i, d);
+	if (i == 0) return unaryPenalty(row, i, d);
 
-		//min_dt(f)
-		int minf = std::numeric_limits<int>::max(); // TO DO possible mistakes
-		for (int dt = 0; dt < MAX_DISP; dt++)
-		{
-			int tempf = f(row, i - 1, dt) + binaryPenalty(d, dt);
-			if (tempf < minf) minf = tempf;
-		}
-		return minf + unaryPenalty(row, i, d);
+	float minf = std::numeric_limits<float>::infinity(); 
+	for (int dt = 0; dt < MAX_DISP; dt++)
+	{
+		float tempf = Fi.at<float>(i-1, d) + binaryPenalty(d, dt);
+		if (tempf < minf) minf = tempf;
 	}
+	//std::cout << unaryPenalty(row, i, d) << endl;
+	return minf + unaryPenalty(row, i, d);
 }
 
 void initFi(int row, int m, int maxdisp)
 {
-	Fi = Mat(m, maxdisp, CV_8S, -1);
+	Fi = Mat(m, maxdisp, CV_32F);
+	HEIGHT = m;
 
 	for (int i = 0; i < m; i++)
 	{
 		for (int d = 0; d < maxdisp; d++)
 		{
-			Fi.at<char>(i, d) = f(row, i, d);
-			//progress(i, m);
+			Fi.at<float>(i, d) = f(row, i, d);
+			//std::cout << Fi.at<float>(i, d) << " - "<< unaryPenalty(row, i, d) << " | ";
 		}
+		std:cout << endl;
 	}
 }
 
 int minf(int row)
 {
-	int min = std::numeric_limits<int>::max();
+	int min = std::numeric_limits<float>::infinity();
 	for (int dt = 0; dt < MAX_DISP; dt++)
 	{
-		int tempf = (int)Fi.at<char>(WIDTH-1, dt);
+		//std::cout << (int)Fi.at<char>(WIDTH - 2, dt);
+		float tempf = (int)Fi.at<char>(HEIGHT -1, dt);
+		
 		if (tempf < min) min = tempf;
 	}
 	return min;
 }
 
+void show()
+{
+	for (int i = 0; i < HEIGHT; i++)
+	{
+		for (int di = 0; di < MAX_DISP; di++) // TODO Possible mistakes here
+		{
+			std::cout << Fi.at<char>(i, di) << " ";
+		}
+		std::cout << std::endl;
+	}
+	
+}
 
 //////////////// Progress bar /////////////////////
 void progress(int p, int max)
 {
 	system("cls");
 
-	if (p == max)
+	if (p == max-1)
 	{
 		std::cout << "Done" << endl;
 	}

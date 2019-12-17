@@ -6,15 +6,15 @@
 using namespace cv;
 
 float Scale = 1; // Windows settings
-int WindowStartX = 800, WindowStartY = 100, WindowMargin = 10;
+int WindowStartX = 1500, WindowStartY = 100, WindowMargin = 10;
 
 
 int main(int argc, char** argv)
 {
 
-	Mat imL = imread("../imgs/bull/im2.ppm", IMREAD_ANYCOLOR);
-	Mat imR = imread("../imgs/bull/im6.ppm", IMREAD_ANYCOLOR);
-	Mat disp = imread("../imgs/bull/disp2.pgm", IMREAD_ANYDEPTH);
+	Mat imL = imread("../imgs/sawtooth/im2.ppm", IMREAD_ANYCOLOR);
+	Mat imR = imread("../imgs/sawtooth/im6.ppm", IMREAD_ANYCOLOR);
+	Mat disp = imread("../imgs/sawtooth/disp2.pgm", IMREAD_ANYDEPTH);
 	Mat diffClr, diffGrs;
 	std::vector<Mat> BGR_L, BGR_R;
 
@@ -37,29 +37,29 @@ int main(int argc, char** argv)
 	imL = BGR_L[0] * 0.0722f + BGR_L[1] * 0.7152f + BGR_L[2] * 0.2126f;
 	imR = BGR_R[0] * 0.0722f + BGR_R[1] * 0.7152f + BGR_R[2] * 0.2126f;
 
-	
 	//Mat A = Mat(20, 20, CV_8S, -1);
-	//std::cout << "Hello" << std::endl;
-	//std::cout << std::numeric_limits<int>::max() << std::endl;
+
+	float a = std::numeric_limits<float>::infinity();
+	std::cout << a << std::endl;
 	
 
 	initUnaryPenalty(imL, imR, MAX_DISP);
 	initBinaryPenalty(MAX_DISP);
 
 	
-
-	for (int row = 0; row < height; row++)
+	
+	for (int row = 0; row < 1 ; row++)
 	{
-		initFi(row, width, MAX_DISP);
-		progress(row, height);
-		std::cout << minf(row) << std::endl;
+		initFi(row, height, MAX_DISP);
+		//progress(row, height);
+		//std::cout << minf(row) << std::endl<<std::flush;
 	}
-
+	//show();
 	
 
 	namedWindow("Left", WINDOW_FREERATIO);
 	namedWindow("Right", WINDOW_FREERATIO);
-	namedWindow("Fi", WINDOW_FREERATIO);
+	
 	//namedWindow("unaryPen[1]", WINDOW_FREERATIO);
 
 	imshow("Left", imL);
