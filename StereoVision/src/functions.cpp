@@ -95,8 +95,7 @@ int minf(int row)
 	int min = std::numeric_limits<float>::infinity();
 	for (int dt = 0; dt < MAX_DISP; dt++)
 	{
-		//std::cout << (int)Fi.at<char>(WIDTH - 2, dt);
-		float tempf = (int)Fi.at<char>(HEIGHT -1, dt);
+		float tempf = Fi.at<float>(HEIGHT -1, dt);
 		
 		if (tempf < min) min = tempf;
 	}
