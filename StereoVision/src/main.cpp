@@ -13,9 +13,9 @@ int WindowStartX = 1500, WindowStartY = 100, WindowMargin = 10;
 int main(int argc, char** argv)
 {
 
-    Mat imL = imread("../imgs/sawtooth/im2.ppm", IMREAD_GRAYSCALE);
-    Mat imR = imread("../imgs/sawtooth/im6.ppm", IMREAD_GRAYSCALE);
-    Mat disp = imread("../imgs/sawtooth/disp2.pgm", IMREAD_ANYDEPTH);
+    Mat imL = imread("../imgs/bull/im2.ppm", IMREAD_GRAYSCALE);
+    Mat imR = imread("../imgs/bull/im6.ppm", IMREAD_GRAYSCALE);
+    Mat disp = imread("../imgs/bull/disp2.pgm", IMREAD_ANYDEPTH);
 
     // Geting image parameters
     int width = imL.cols, height = imL.rows;
@@ -23,16 +23,10 @@ int main(int argc, char** argv)
     minMaxLoc(disp, nullptr, &MAX_DISP);
     MAX_DISP = static_cast<int>(MAX_DISP/8);  // TO DO round
 
-    /*
-    assert(2 + 2 == 4);
-    std::cout << "Execution continues past the first assert\n";
-    assertm(2 + 2 == 5, "There are five lights");
-    std::cout << "Execution continues past the second assert\n";
-    */
+    
+ 
 
-    float f = -0.3f;
-    int kl = 4;
-    std::cout << abs(f) << std::endl;
+    //std::cout << result.at<uchar>(0,2) << std::endl;
     std::cout << "Max disparity: " << MAX_DISP << std::endl;
     std::cout << "Width: " << width<< " Height: " << height << std::endl;
 
@@ -42,7 +36,9 @@ int main(int argc, char** argv)
     initBinaryPenalty(g);
     //showInt(g, MAX_DISP + 1, MAX_DISP + 1);
 
-    for (int row = 0; row < 10; row++)
+
+    Mat result = Mat(1, width, CV_32S);
+    for (int row = 0; row < height; row++)
     {
         //Initialisng "H" - unary penalty
         Mat H = Mat(width, MAX_DISP + 1, CV_32F); 
@@ -62,30 +58,29 @@ int main(int argc, char** argv)
         Mat D = Mat(1, width, CV_32S);
 
         D.at<int>(0, width - 1) = argmin(row, width - 1, Fi, g);
-        std::cout << D.at<int>(0, width - 1) << std::endl;
 
         for (int i = width - 2; i >= 0; i--)
         {
             D.at<int>(0, i) = prevInd.at<int>( i + 1, D.at<int>(0, i + 1) );
         }
+        //showInt(D, 1, width);
 
-        showInt(D, 1, width);
+        for (int i = 0; i < width; i++)
+        {
+            imR.at<uchar>(row, i) = static_cast<uchar>(D.at<int>(0, i) * 8);
+        } 
     }
-
     
 
-
-
-
-
+  
     namedWindow("Left", WINDOW_FREERATIO);
     namedWindow("Right", WINDOW_FREERATIO);
 
     imshow("Left", imL);
     imshow("Right", imR);
 
-    resizeWindow("Left", width * Scale, height * Scale);
-    resizeWindow("Right", width * Scale, height * Scale);
+    //resizeWindow("Left", width * Scale, height * Scale);
+    //resizeWindow("Right", width * Scale, height * Scale);
     
     moveWindow("Left", WindowStartX, WindowStartY);
     moveWindow("Right", WindowStartX + width * Scale + WindowMargin, WindowStartY);
