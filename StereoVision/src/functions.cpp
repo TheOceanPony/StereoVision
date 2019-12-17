@@ -21,7 +21,7 @@ void initUnaryPenalty(Mat imL, Mat imR, int maxdisp)
 			for (int di = 0; di < MAX_DISP; di++) 
 			{
 				if (i >= di) temp.at<float>(i, di) = abs((int)imL.at<uchar>(row, i) - (int)imR.at<uchar>(row, i - di));
-				else temp.at<float>(i, di) = 0; // TODO Possible mistakes here
+				else temp.at<float>(i, di) = std::numeric_limits<float>::infinity(); // TODO Possible mistakes here
 			}
 		}
 		H.push_back(temp);
@@ -86,7 +86,7 @@ void initFi(int row, int m, int maxdisp)
 			Fi.at<float>(i, d) = f(row, i, d);
 			//std::cout << Fi.at<float>(i, d) << " - "<< unaryPenalty(row, i, d) << " | ";
 		}
-		std:cout << endl;
+		//std:cout << endl;
 	}
 }
 
