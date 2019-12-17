@@ -139,3 +139,8 @@ std::cout <<"Max / Min disparity: "<< MAX_DISP<<" / " << MIN_DISP <<std::endl;
 	moveWindow("DiffGrs", WindowStartX + imgL.cols * Scale + WindowMargin, WindowStartY + imgL.rows * Scale + WindowMargin + 30);
 
 */
+
+
+Mat test = Mat::zeros(100, 10, CV_8UC1);
+    std::cout << "Width: " << test.cols << " Height: " << test.rows << std::endl; //For reference on args positions
+    

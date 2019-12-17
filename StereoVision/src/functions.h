@@ -2,15 +2,16 @@
 #include "opencv2/opencv.hpp"
 using namespace cv;
 
-void initUnaryPenalty(Mat imL, Mat imR, int MAX_DISP);
-int unaryPenalty(int row, int i, int disp);
+void initUnaryPenalty(Mat& H, int row, Mat& imL, Mat& imR);
+//int unaryPenalty(int row, int i, int disp);
 
-void initBinaryPenalty(int MAX_DISP);
-int binaryPenalty(int di, int dj);
+void initBinaryPenalty(Mat &g);
+//int binaryPenalty(int di, int dj);
 
-float f(int row, int i, int d);
-void initFi(int row, int m, int maxdisp);
-int minf(int row);
+void initFi(Mat& Fi, int row, Mat& H, Mat& g);
+float f(int row, int i, int d, Mat& Fi, Mat& H, Mat& g);
+//int minf(int row);
 
-void progress(int i, int max);
-void show();
+//void progress(int i, int max);
+void showFl(Mat& M, int size1, int size2);
+void showInt(Mat& M, int size1, int size2);

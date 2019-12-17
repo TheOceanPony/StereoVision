@@ -2,143 +2,100 @@
 #include <iostream>
 
 using namespace std;
-static int MAX_DISP, WIDTH;
 
 //////////////// Unary penalty /////////////////////
-static std::vector<cv::Mat> H;
-
-void initUnaryPenalty(Mat imL, Mat imR, int maxdisp)
+void initUnaryPenalty(Mat &H, int row, Mat& imL, Mat& imR)
 {
-	int width = imL.cols, height = imL.rows;
-	MAX_DISP = maxdisp;
-	WIDTH = width;
-
-	for (int row = 0; row < height; row++)
-	{
-		Mat temp = Mat::zeros(width, MAX_DISP, CV_32F);
-		for (int i = 0; i < width; i++)
-		{
-			for (int di = 0; di < MAX_DISP; di++) 
-			{
-				if (i >= di) temp.at<float>(i, di) = abs((int)imL.at<uchar>(row, i) - (int)imR.at<uchar>(row, i - di));
-				else temp.at<float>(i, di) = std::numeric_limits<float>::infinity(); // TODO Possible mistakes here
-			}
-		}
-		H.push_back(temp);
-	}
-	std::cout << ">Unary penalty matrix initialised!" << std::endl;
+    int maxdi = H.cols, width = H.rows;
+    std::cout << "cols / rows :"<<width<<" "<<maxdi << std::endl;
+    for (int i = 0; i < width; i++)
+    {
+        for (int di = 0; di < maxdi; di++)
+        {
+            if (i >= di)
+                H.at<float>(i, di) =
+                abs (static_cast<float>(imL.at<uchar>(row, i)) - static_cast<float>(imR.at<uchar>(row, i - di)) );
+            else
+                H.at<float>(i, di) = std::numeric_limits<float>::infinity();
+        }
+    }
+    std::cout << ">Unary penalty matrix for row "<<row<<" initialised!" << std::endl;
 }
 
-int unaryPenalty(int row, int i, int disp)
+void showFl(Mat& M, int size1, int size2)
 {
-	return H[row].at<float>(i, disp);
+    std::cout << std::endl;
+    for (int i = 0; i < size1; i++)
+    {
+        for (int j = 0; j < size2; j++) // TODO Possible mistakes here
+        {
+            std::cout << M.at<float>(i, j) << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
 }
+
 
 
 //////////////// Binary penalty /////////////////////
-Mat g;
 
-void initBinaryPenalty(int maxdisp)
+void initBinaryPenalty(Mat &g)
 {
-	g = Mat::zeros(maxdisp, maxdisp, CV_32F);
-	for (int di = 0; di < maxdisp; di++)
-	{
-		for (int dj = 0; dj < maxdisp; dj++)
-		{
-			g.at<float>(di, dj) = abs(di - dj); 
-		}
-	}
-	std::cout << ">Binary penalty matrix initialised!" << std::endl;
+    int maxdi = g.cols;
+    for (int di = 0; di < maxdi; di++)
+    {
+        for (int dj = 0; dj < maxdi; dj++)
+        {
+            g.at<int>(di, dj) = abs(di - dj);
+        }
+    }
+    std::cout << ">Binary penalty matrix initialised!" << std::endl;
 }
 
-int binaryPenalty(int di, int dj)
+void showInt(Mat& M, int size1, int size2)
 {
-	return g.at<float>(di, dj);
+    std::cout << std::endl;
+    for (int i = 0; i < size1; i++)
+    {
+        for (int j = 0; j < size2; j++) // TODO Possible mistakes here
+        {
+            std::cout << M.at<int>(i, j) << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
 }
 
-//////////////// Fi /////////////////////
-Mat Fi;
-int HEIGHT;
 
-float f(int row, int i, int d)
+
+//////////////// Ñumulative penalty /////////////////////
+void initFi(Mat& Fi, int row, Mat& H, Mat& g)
 {
-	if (i == 0) return unaryPenalty(row, i, d);
-
-	float minf = std::numeric_limits<float>::infinity(); 
-	for (int dt = 0; dt < MAX_DISP; dt++)
-	{
-		float tempf = Fi.at<float>(i-1, d) + binaryPenalty(d, dt);
-		if (tempf < minf) minf = tempf;
-	}
-	//std::cout << unaryPenalty(row, i, d) << endl;
-	return minf + unaryPenalty(row, i, d);
+    int width = Fi.rows, maxd = Fi.cols;
+    for (int i = 0; i < width; i++)
+    {
+        for (int d = 0; d < maxd; d++)
+        {
+            Fi.at<float>(i, d) = f(row, i, d, Fi, H, g);
+        }
+    }
 }
 
-void initFi(int row, int m, int maxdisp)
+float f(int row, int i, int d, 
+        Mat &Fi, Mat &H, Mat &g)
 {
-	Fi = Mat(m, maxdisp, CV_32F);
-	HEIGHT = m;
+    int maxd = g.cols;
+    if (i == 0) return H.at<float>(i, d);
 
-	for (int i = 0; i < m; i++)
-	{
-		for (int d = 0; d < maxdisp; d++)
-		{
-			Fi.at<float>(i, d) = f(row, i, d);
-			//std::cout << Fi.at<float>(i, d) << " - "<< unaryPenalty(row, i, d) << " | ";
-		}
-		//std:cout << endl;
-	}
-}
-
-int minf(int row)
-{
-	int min = std::numeric_limits<float>::infinity();
-	for (int dt = 0; dt < MAX_DISP; dt++)
-	{
-		float tempf = Fi.at<float>(HEIGHT -1, dt);
-		
-		if (tempf < min) min = tempf;
-	}
-	return min;
-}
-
-void show()
-{
-	for (int i = 0; i < HEIGHT; i++)
-	{
-		for (int di = 0; di < MAX_DISP; di++) // TODO Possible mistakes here
-		{
-			std::cout << Fi.at<char>(i, di) << " ";
-		}
-		std::cout << std::endl;
-	}
-	
-}
-
-//////////////// Progress bar /////////////////////
-void progress(int p, int max)
-{
-	system("cls");
-
-	if (p == max-1)
-	{
-		std::cout << "Done" << endl;
-	}
-	else
-	{
-		int barWidth = 100;
-		float progress = p * 100 / max;
-
-		std::cout << "[";
-		//int pos = barWidth * progress;
-		for (int i = 0; i < barWidth; i++)
-		{
-			if (i < (int)progress) std::cout << "*";
-			else if (i == (int)progress) std::cout << "|";
-			else std::cout << " ";
-		}
-		std::cout << "] - " << p << " / " << max << endl;
-		std::cout << std::flush;
-	}
-	
+    else
+    {
+        float minf = std::numeric_limits<float>::infinity();
+        for (int dj = 0; dj < maxd; dj++)
+        {
+            float temp = Fi.at<float>(i - 1, dj) + g.at<int>(d, dj);
+            if (temp < minf) minf = temp;
+        }
+        return minf + H.at<float>(i, d);
+    }
 }
