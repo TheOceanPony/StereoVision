@@ -52,6 +52,10 @@ int main(int argc, char** argv)
         Mat Fi = Mat(width, MAX_DISP + 1, CV_32F);
         initFi(Fi, row, H, g);
         showFl(Fi, 20, MAX_DISP + 1);
+
+        Mat prevInd = Mat(width, MAX_DISP + 1, CV_32S);
+        initPrevInd(prevInd, Fi, g, row);
+        showInt(prevInd, width, MAX_DISP + 1);
     }
 
 

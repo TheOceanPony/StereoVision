@@ -82,8 +82,7 @@ void initFi(Mat& Fi, int row, Mat& H, Mat& g)
     }
 }
 
-float f(int row, int i, int d, 
-        Mat &Fi, Mat &H, Mat &g)
+float f(int row, int i, int d, Mat &Fi, Mat &H, Mat &g)
 {
     int maxd = g.cols;
     if (i == 0) return H.at<float>(i, d);
@@ -97,5 +96,38 @@ float f(int row, int i, int d,
             if (temp < minf) minf = temp;
         }
         return minf + H.at<float>(i, d);
+    }
+}
+
+
+
+//////////////// Previous index /////////////////////
+void initPrevInd(Mat &prevInd, Mat &Fi, Mat &g, int row)
+{
+    int width = prevInd.rows, maxd = prevInd.cols;
+
+    for (int d = 0; d < maxd; d++)
+    {
+        prevInd.at<int>(0, d) = 0;
+    }
+
+    for (int i = 1; i < width; i++) 
+    {
+        for (int d = 0; d < maxd; d++)
+        {
+            // argmin_dj ( f_i-1(dj) + g(d, dj) )
+            float minf = std::numeric_limits<float>::infinity();
+            int mind = 0;
+            for (int dj = 0; dj < maxd; dj++)
+            {
+                float temp = Fi.at<float>(i - 1, dj) + static_cast<float>(g.at<int>(dj, d));
+                if (temp < minf)
+                {
+                    minf = temp;
+                    mind = dj;
+                }
+            }
+            prevInd.at<int>(i, d) = mind;
+        }
     }
 }
