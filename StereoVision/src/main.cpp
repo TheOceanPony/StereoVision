@@ -40,25 +40,39 @@ int main(int argc, char** argv)
     Mat g = Mat(MAX_DISP+1, MAX_DISP+1, CV_32S);  // MAX_DISP, MAX_DISP -1, ... , 1 and 0;
 
     initBinaryPenalty(g);
-    showInt(g, MAX_DISP + 1, MAX_DISP + 1);
+    //showInt(g, MAX_DISP + 1, MAX_DISP + 1);
 
-    for (int row = 0; row < 1; row++)
+    for (int row = 0; row < 10; row++)
     {
         //Initialisng "H" - unary penalty
         Mat H = Mat(width, MAX_DISP + 1, CV_32F); 
         initUnaryPenalty(H, row, imL, imR);
-        showFl(H, 20, MAX_DISP + 1);
+        //showFl(H, 20, MAX_DISP + 1);
 
         Mat Fi = Mat(width, MAX_DISP + 1, CV_32F);
         initFi(Fi, row, H, g);
-        showFl(Fi, 20, MAX_DISP + 1);
+        //showFl(Fi, 20, MAX_DISP + 1);
 
         Mat prevInd = Mat(width, MAX_DISP + 1, CV_32S);
         initPrevInd(prevInd, Fi, g, row);
-        showInt(prevInd, width, MAX_DISP + 1);
+        //showInt(prevInd, width, MAX_DISP + 1);
+
+
+        //di
+        Mat D = Mat(1, width, CV_32S);
+
+        D.at<int>(0, width - 1) = argmin(row, width - 1, Fi, g);
+        std::cout << D.at<int>(0, width - 1) << std::endl;
+
+        for (int i = width - 2; i >= 0; i--)
+        {
+            D.at<int>(0, i) = prevInd.at<int>( i + 1, D.at<int>(0, i + 1) );
+        }
+
+        showInt(D, 1, width);
     }
 
-
+    
 
 
 

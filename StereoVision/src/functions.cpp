@@ -101,6 +101,27 @@ float f(int row, int i, int d, Mat &Fi, Mat &H, Mat &g)
 
 
 
+//////////////// argmin_d( f_i(d) ) /////////////////////
+int argmin(int row, int i, Mat &Fi, Mat &g)
+{
+    int maxd = g.cols;
+
+    float min = std::numeric_limits<float>::infinity();
+    int mind;
+    for (int d = 0; d < maxd; d++)
+    {
+        float temp = Fi.at<float>(i, d);
+        if (temp < min)
+        {
+            min = temp;
+            mind = d;
+        }
+    }
+    return mind;
+}
+
+
+
 //////////////// Previous index /////////////////////
 void initPrevInd(Mat &prevInd, Mat &Fi, Mat &g, int row)
 {
@@ -131,3 +152,4 @@ void initPrevInd(Mat &prevInd, Mat &Fi, Mat &g, int row)
         }
     }
 }
+
