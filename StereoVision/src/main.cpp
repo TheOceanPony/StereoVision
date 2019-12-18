@@ -12,15 +12,6 @@ int WindowStartX = 1500, WindowStartY = 100, WindowMargin = 10;
 
 float alpha = 1;
 
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++) 
-        {
-            int w = testBP.at<int>(i, j);
-            //std::cout <<w << " "<< a[i][j] << " " << i << j << std::endl;
-            assert( w == a[i][j] );
-        }
-    }
 int main(int argc, char** argv)
 {
 //Tests
