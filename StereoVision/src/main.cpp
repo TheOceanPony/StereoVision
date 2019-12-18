@@ -1,28 +1,31 @@
 #include "opencv2/opencv.hpp"
 #include "functions.h"
 #include <stdint.h>
-#include <cassert>
-#define assertm(exp, msg) assert(((void)msg, exp))
+
+//#include <cassert>
+//#define assertm(exp, msg) assert(((void)msg, exp))
 
 using namespace cv;
 
 float Scale = 1; // Windows settings
 int WindowStartX = 1500, WindowStartY = 100, WindowMargin = 10;
 
+float alpha = 1;
+
 
 int main(int argc, char** argv)
 {
 
-    Mat imL = imread("../imgs/bull/im2.ppm", IMREAD_GRAYSCALE);
-    Mat imR = imread("../imgs/bull/im6.ppm", IMREAD_GRAYSCALE);
-    Mat disp = imread("../imgs/bull/disp2.pgm", IMREAD_ANYDEPTH);
+    Mat imL = imread("../imgs/3d/view2.png", IMREAD_GRAYSCALE);
+    Mat imR = imread("../imgs/3d/view1.png", IMREAD_GRAYSCALE);
+    //Mat disp = imread("../imgs/sawtooth/disp2.pgm", IMREAD_ANYDEPTH);
 
     // Geting image parameters
     int width = imL.cols, height = imL.rows;
-    double MAX_DISP;
-    minMaxLoc(disp, nullptr, &MAX_DISP);
-    MAX_DISP = static_cast<int>(MAX_DISP/8);  // TO DO round
-
+    //double MAX_DISP;
+    //minMaxLoc(disp, nullptr, &MAX_DISP);
+   // MAX_DISP = static_cast<int>(MAX_DISP/8);  // TO DO round
+    int MAX_DISP = 50;
     
  
 
@@ -33,13 +36,18 @@ int main(int argc, char** argv)
     //Initialisng "g" - binary penalty
     Mat g = Mat(MAX_DISP+1, MAX_DISP+1, CV_32S);  // MAX_DISP, MAX_DISP -1, ... , 1 and 0;
 
-    initBinaryPenalty(g);
+    std::clock_t start, end;
+    start = clock();
+
+    initBinaryPenalty(g, alpha);
     //showInt(g, MAX_DISP + 1, MAX_DISP + 1);
 
 
-    Mat result = Mat(1, width, CV_32S);
+    Mat result = Mat(1, height, CV_32S);
     for (int row = 0; row < height; row++)
     {
+        progress(row, height);
+
         //Initialisng "H" - unary penalty
         Mat H = Mat(width, MAX_DISP + 1, CV_32F); 
         initUnaryPenalty(H, row, imL, imR);
@@ -67,12 +75,18 @@ int main(int argc, char** argv)
 
         for (int i = 0; i < width; i++)
         {
-            imR.at<uchar>(row, i) = static_cast<uchar>(D.at<int>(0, i) * 8);
+            imR.at<uchar>(row, i) = static_cast<uchar>(D.at<int>(0, i) * 255 / 50);
         } 
     }
-    
-
+    end = clock();
+    double time_taken = double(end - start) / double(CLOCKS_PER_SEC); 
+    std::cout << "Time taken by program is : " << std::fixed
+         << time_taken << std::setprecision(5);
+    std::cout << " sec " << std::endl;
   
+    std::cout << "Max disparity: " << MAX_DISP << std::endl;
+    std::cout << "Width: " << width << " Height: " << height << std::endl;
+
     namedWindow("Left", WINDOW_FREERATIO);
     namedWindow("Right", WINDOW_FREERATIO);
 
@@ -83,7 +97,7 @@ int main(int argc, char** argv)
     //resizeWindow("Right", width * Scale, height * Scale);
     
     moveWindow("Left", WindowStartX, WindowStartY);
-    moveWindow("Right", WindowStartX + width * Scale + WindowMargin, WindowStartY);
+    moveWindow("Right", WindowStartX , WindowStartY);
 
     waitKey();
 }

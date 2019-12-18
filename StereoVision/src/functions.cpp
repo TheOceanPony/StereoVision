@@ -7,7 +7,7 @@ using namespace std;
 void initUnaryPenalty(Mat &H, int row, Mat& imL, Mat& imR)
 {
     int maxdi = H.cols, width = H.rows;
-    std::cout << "cols / rows :"<<width<<" "<<maxdi << std::endl;
+    //std::cout << "cols / rows :"<<width<<" "<<maxdi << std::endl;
     for (int i = 0; i < width; i++)
     {
         for (int di = 0; di < maxdi; di++)
@@ -19,7 +19,7 @@ void initUnaryPenalty(Mat &H, int row, Mat& imL, Mat& imR)
                 H.at<float>(i, di) = std::numeric_limits<float>::infinity();
         }
     }
-    std::cout << ">Unary penalty matrix for row "<<row<<" initialised!" << std::endl;
+    //std::cout << ">Unary penalty matrix for row "<<row<<" initialised!" << std::endl;
 }
 
 void showFl(Mat& M, int size1, int size2)
@@ -40,14 +40,14 @@ void showFl(Mat& M, int size1, int size2)
 
 //////////////// Binary penalty /////////////////////
 
-void initBinaryPenalty(Mat &g)
+void initBinaryPenalty(Mat &g, float alpha)
 {
     int maxdi = g.cols;
     for (int di = 0; di < maxdi; di++)
     {
         for (int dj = 0; dj < maxdi; dj++)
         {
-            g.at<int>(di, dj) = abs(di - dj);
+            g.at<int>(di, dj) = alpha*abs(di - dj);
         }
     }
     std::cout << ">Binary penalty matrix initialised!" << std::endl;
@@ -153,3 +153,32 @@ void initPrevInd(Mat &prevInd, Mat &Fi, Mat &g, int row)
     }
 }
 
+
+
+//////////////// Progress bar /////////////////////
+void progress(int p, int max)
+{
+    system("cls");
+
+    if (p == max - 1)
+    {
+        std::cout << "Done" << endl;
+    }
+    else
+    {
+        int barWidth = 100;
+        float progress = p * 100 / max;
+
+        std::cout << "[";
+        //int pos = barWidth * progress;
+        for (int i = 0; i < barWidth; i++)
+        {
+            if (i < (int)progress) std::cout << "*";
+            else if (i == (int)progress) std::cout << "|";
+            else std::cout << " ";
+        }
+        std::cout << "] - " << p << " / " << max << endl;
+        std::cout << std::flush;
+    }
+
+}
