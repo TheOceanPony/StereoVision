@@ -31,7 +31,17 @@ int main(int argc, char** argv)
     Mat testBP = Mat(3, 3, CV_32S);
     initBinaryPenalty(testBP, alpha);
     showInt(testBP, 3, 3);
-//Code
+
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++) 
+        {
+            int w = testBP.at<int>(i, j);
+            //std::cout <<w << " "<< a[i][j] << " " << i << j << std::endl;
+            assert( w == a[i][j] );
+        }
+    }
+    
     Mat imL = imread("../imgs/3d/view2.png", IMREAD_GRAYSCALE);
     Mat imR = imread("../imgs/3d/view1.png", IMREAD_GRAYSCALE);
     //Mat disp = imread("../imgs/sawtooth/disp2.pgm", IMREAD_ANYDEPTH);
