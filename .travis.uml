@@ -1,0 +1,6 @@
+language: cpp
+compiler: gcc
+script: 
+  - g++ main.cpp -std=c++17 -o travis_gcc_cpp17_cppcheck
+  - ./travis_gcc_cpp17_cppcheck
+  - cppcheck --quiet --error-exitcode=1 . 
